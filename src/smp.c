@@ -9,6 +9,7 @@
 #include "config.h" // CONFIG_*
 #include "cmos.h" // CMOS_BIOS_SMP_COUNT
 #include "paravirt.h"
+#include "xen.h"
 
 #define APIC_ICR_LOW ((u8*)BUILD_APIC_ADDR + 0x300)
 #define APIC_SVR     ((u8*)BUILD_APIC_ADDR + 0x0F0)
@@ -84,6 +85,9 @@ int apic_id_is_present(u8 apic_id)
 void
 smp_probe(void)
 {
+    if (usingXen())
+        return;
+
     ASSERT32FLAT();
     u32 eax, ebx, ecx, cpuid_features;
     cpuid(1, &eax, &ebx, &ecx, &cpuid_features);
